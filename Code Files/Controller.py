@@ -33,17 +33,20 @@ class Controller(object):
         '''
         base_rotation = [-90, 0, 90]
         base_movement = [-3, -2, -1, 0, 1, 2, 3]
-# model = 0 random model
+        
+        # model = 0 random model
         # move based on sensors
-        # for example,
+        # For example,
         # if sensors get [3,0,2], then choose to turn left or right randomly,valid_rotation = [-90,90],
         #   if  moves to right, valid_movement = [1, 2]
         #   if  moves to left, valid_movement = [1, 2 ,3]
         # if sensors get [0,0,2], it has to turn right,valid_rotation = [90],valid_movement = [1, 2]
         # if sensors get [0,0,0], which means it runs into a dead end,it has to go back,valid_rotation = [0],valid_movement = [-3,-2,-1]
+        
         rotation, movement = 0, 0
-
-        if model == 0:  # random exploring model
+        
+        # Random exploring model
+        if model == 0:  
             valid_rotation =[]
             print ('sensors')
             for i in range(len(sensors)):
@@ -65,8 +68,8 @@ class Controller(object):
             return rotation, movement
 
 
-
-        elif model == 1:  # random exploring model plus dead end
+        # Random exploring model plus dead end
+        elif model == 1:  
             valid_rotation = []
             print ('sensors')
             for i in range(len(sensors)):
