@@ -15,16 +15,15 @@ class Maze(object):
         '''
         with open(filename, 'rb') as f_in:
 
-            # First line should be an integer with the maze dimensions
+            # First line is an integer with maze dimensions
             self.dim = int(f_in.next())
 
-            # Subsequent lines describe the permissability of walls
+            # Describes the permissability of walls
             walls = []
             for line in f_in:
                 walls.append(map(int,line.split(',')))
             self.walls = np.array(walls)
 
-        # Perform validation on maze
         # Maze dimensions
         if self.dim % 2:
             raise Exception('Maze dimensions must be even in length!')
@@ -33,11 +32,13 @@ class Maze(object):
 
         # Wall permeability
         wall_errors = []
-        # vertical walls
+        
+        # Vertical walls
         for x in range(self.dim-1):
             for y in range(self.dim):
                 if (self.walls[x,y] & 2 != 0) != (self.walls[x+1,y] & 8 != 0):
                     wall_errors.append([(x,y), 'v'])
+                    
         # horizontal walls
         for y in range(self.dim-1):
             for x in range(self.dim):
@@ -79,10 +80,11 @@ class Maze(object):
         """
         dir_move = {'u': [0, 1], 'r': [1, 0], 'd': [0, -1], 'l': [-1, 0],
                     'up': [0, 1], 'right': [1, 0], 'down': [0, -1], 'left': [-1, 0]}
-
+        
+        # make copy to preserve original
         sensing = True
         distance = 0
-        curr_cell = list(cell) # make copy to preserve original
+        curr_cell = list(cell) 
         while sensing:
             if self.is_permissible(curr_cell, direction):
                 distance += 1
