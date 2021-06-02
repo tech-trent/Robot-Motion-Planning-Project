@@ -6,7 +6,7 @@ import sys
 import time
 import operator
 
-# global dictionaries for robot movement and sensing
+# Global dictionaries for robot movement and sensing
 dir_sensors = {'u': ['l', 'u', 'r'], 'r': ['u', 'r', 'd'],
                'd': ['r', 'd', 'l'], 'l': ['d', 'l', 'u'],
                'up': ['l', 'u', 'r'], 'right': ['u', 'r', 'd'],
@@ -21,7 +21,7 @@ map_dic = {'up': 3, 'right': 0, 'down': 1, 'left': 2,
            'u': 3, 'r': 0, 'd': 1, 'l': 2,}
 
 exploration_model = str(sys.argv[2])
-# 'heuristic' # 'deadend'  'random'  'heuristic' 'counter'
+# 'Heuristic' 'Deadend' 'Random' 'Heuristic' 'Counter'
 
 
 class Robot(object):
@@ -41,13 +41,17 @@ class Robot(object):
         self.base_rotation = [-90, 0, 90]
         self.base_movement = [-3, -2, -1, 0, 1, 2, 3]
 
-        # more information to learn
+        # More information to learn
         self.run = 0
-        self.move_time = 0
-        self.goal_position = [0, 0]         # remember the goal_position
-        self.dead_zone = False              # check if the robot in the dead_zone
-        self.remember_goal = False          # check if the robot hit_goal
-        self.last_move_backward = False     # check last step robot move_backward
+        self.move_time = 0 
+        # Remember the goal_position
+        self.goal_position = [0, 0] 
+        # Check if the robot in the dead_zone        
+        self.dead_zone = False
+        # Check if the robot hit_goal             
+        self.remember_goal = False     
+        # Check last step robot move_backward      
+        self.last_move_backward = False    
         self.last_movement = 0
         self.path_length = 0
 
@@ -69,7 +73,7 @@ class Robot(object):
 
         self.exploration_model = exploration_model
 
-        # exploring model
+        # Exploring model
         self.random_fuc = True if self.exploration_model in ['random', 'deadend'] else False
         self.dead_end_fuc = True if self.exploration_model in ['counter', 'deadend', 'heuristic'] else False
         self.counter_fuc = True if self.exploration_model in ['counter', 'heuristic'] else False
@@ -153,14 +157,14 @@ class Robot(object):
         return self.location[0] in self.goal_bounds and self.location[1] in self.goal_bounds
 
     def check_backward(self, sensors):
-        # check if need to move_backward
-        # 1.first time move to the end of the dead zone,now all three sensor value are 0
+        # Check if need to move_backward
+        # 1. First time move to the end of the dead zone,now all three sensor value are 0
         if self.last_move_backward is False and max(sensors) == 0:
             return True
-        # 2.last time it moves backward, now left and right sensor value are still 0
+        # 2. Last time it moves backward, now left and right sensor value are still 0
         if self.last_move_backward is True and sensors[0] == 0 and sensors[2] == 0:
             return True
-        # 3.hit the goal, need to remember the goal position and then move backward to get out
+        # 3. Hit the goal, need to remember the goal position and then move backward to get out
         if self.in_goal_bounds():
             self.goal_position[0] = self.location[0]
             self.goal_position[1] = self.location[1]
@@ -169,7 +173,7 @@ class Robot(object):
         return False
 
     def update(self, rotation, movement):
-        # update local position
+        # Update local position
         if movement > 0:
             self.last_move_backward = False
             if rotation == -90:
@@ -202,7 +206,7 @@ class Robot(object):
             if sensors[i] > 0:
                 possible_rotation.append(self.base_rotation[i])
                 possible_move.append(min(sensors[i], 3))
-        #print possible_rotation, possible_move
+        # Print possible_rotation, possible_move
 
         for i in range(len(possible_rotation)):
             for j in range(1, possible_move[i]+1):
@@ -264,7 +268,8 @@ class Robot(object):
                             if self.map_maze[x][y][a] > 0:
                                 if 0 <= x - (a - 2) * (a % 2)<self.maze_dim and 0 <= y - (a - 1) * ((a + 1) % 2)<self.maze_dim:
                                     V2.append(self.value[x - (a - 2) * (a % 2)][y - (a - 1) * ((a + 1) % 2)])
-                        V2 = min(V2) + 1  # if len()
+                        # if len()
+                        V2 = min(V2) + 1  
                         if V2 < self.value[x][y]:
                             change = True
                             self.value[x][y] = V2
@@ -293,7 +298,7 @@ class Robot(object):
         #time.sleep(1)
 
         if self.run == 0:
-            # check if need to stop first run and return 'Reset', 'Reset'
+            # Check if need to stop first run and return 'Reset', 'Reset'
             self.map(sensors)
             if self.move_time > 998:
                 print ('self.move_time')
@@ -322,19 +327,19 @@ class Robot(object):
 
             ##### random_fuc
             if self.random_fuc:
-            # check if need to move_backward, if True, return rotation, movement = 0, -1
-            # learn the map_dead_zone
+            # Check if need to move_backward, if True, return rotation, movement = 0, -1
+            # Learn the map_dead_zone
                 if self.check_backward(sensors):
                     #print 'move back'
                     rotation, movement = 0, -1
-                    # update local position
+                    # Update local position
                     self.update(rotation, movement)
                     self.last_movement = movement
                     return rotation, movement
 
                 valid_rotation = []
-                # if this time no need to move backward, check if last time it moves backward,
-                # if True, rotation should be left or right，change self.last_move_backward to False
+                # If this time no need to move backward, check if last time it moves backward,
+                # If True, rotation should be left or right，change self.last_move_backward to False
                 if self.last_move_backward:
                     for i in [0, 2]:
                         if sensors[i] > 0:
@@ -346,7 +351,7 @@ class Robot(object):
                             valid_rotation.append(self.base_rotation[i])
                 if len(valid_rotation) == 0:
                     rotation, movement = 0, -1
-                    # update local position
+                    # Update local position
                     self.update(rotation, movement)
                     self.last_movement = movement
                     return rotation, movement
@@ -362,13 +367,13 @@ class Robot(object):
                 self.update(rotation, movement)
                 self.last_movement = movement
                 return rotation, movement
-            # check and avoid move to the dead zone
+            # Check and avoid move to the dead zone
             ##### dead_end_fuc
             if self.dead_end_fuc:
                 valid_move = self.check_dead_zone(sensors)
                 if len(valid_move) == 0:
                     rotation, movement = 0, -1
-                    # update local position
+                    # Update local position
                     self.update(rotation, movement)
                     self.last_movement = movement
                     return rotation, movement
