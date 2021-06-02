@@ -18,11 +18,11 @@ if __name__ == '__main__':
     wally.hideturtle()
     wally.penup()
 
-    # maze centered on (0,0), squares are 20 units in length.
+    # Maze centered on (0,0), squares are 20 units in length.
     sq_size = 20
     origin = testmaze.dim * sq_size / -2
 
-    # iterate through squares one by one to decide where to draw walls
+    # Iterate through squares one by one to decide where to draw walls
     for x in range(testmaze.dim):
         for y in range(testmaze.dim):
             if not testmaze.is_permissible([x,y], 'up'):
@@ -39,7 +39,7 @@ if __name__ == '__main__':
                 wally.forward(sq_size)
                 wally.penup()
 
-            # only check bottom wall if on lowest row
+            # Only check bottom wall if on lowest row
             if y == 0 and not testmaze.is_permissible([x,y], 'down'):
                 wally.goto(origin + sq_size * x, origin)
                 wally.setheading(0)
@@ -47,7 +47,7 @@ if __name__ == '__main__':
                 wally.forward(sq_size)
                 wally.penup()
 
-            # only check left wall if on leftmost column
+            # Only check left wall if on leftmost column
             if x == 0 and not testmaze.is_permissible([x,y], 'left'):
                 wally.goto(origin, origin + sq_size * y)
                 wally.setheading(90)
